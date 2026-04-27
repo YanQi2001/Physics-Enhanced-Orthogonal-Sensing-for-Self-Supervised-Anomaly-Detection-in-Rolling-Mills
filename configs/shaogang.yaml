@@ -1,0 +1,24 @@
+data:
+  window_size: 1024
+  
+csd_encoder:
+  matrix_size: 16
+  token_dim: 4
+  d_model: 64
+  n_heads: 4
+  n_layers: 3
+  projection_dim: 128
+
+vqvae:
+  d_model: 128
+  n_embeddings: 8
+  n_temporal: 16
+  commitment_cost: 0.5
+  lambda_recon: 0.1
+  median_kernel: 0
+
+fusion:
+  d_model: 128
+  n_reference_states: 4
+
+  dropout: 0.1

@@ -1,0 +1,123 @@
+# 多模态故障检测系统配置文件
+
+# 数据配置
+data:
+  # 采样频率
+  fs: 1000
+  # 窗口大小
+  window_size: 1024
+  # 滑动步长
+  stride: 512
+  # 压力通道索引
+  pressure_indices: [0, 2]
+  # 是否预计算 CSD
+  precompute_csd: true
+  
+# 虚拟通道扩展配置
+virtual_channel:
+  wavelet: 'db4'
+  level: 3
+  top_k: 3
+  lambda_weight: 1.0
+  mode: 'static'  # 'static' or 'dynamic'
+
+# CSD 矩阵配置
+csd:
+  nperseg: 256
+  noverlap: 128
+  regularization_eps: 1.0e-6
+  aggregate_freq: 'mean'
+
+# SPD 编码器配置
+spd_encoder:
+  input_size: 16
+  hidden_sizes: [12, 8]
+  projection_dim: 128
+  epsilon: 1.0e-4
+
+# Ti-MAE 配置
+timae:
+  seq_len: 1024
+  in_channels: 2
+  patch_size: 16
+  d_model: 128
+  n_heads: 4
+  n_layers: 4
+  d_ff: 512
+  dropout: 0.1
+  # 遮蔽配置
+  point_ratio: 0.5
+  block_ratio: 0.2
+  block_size: 4
+  # 物理约束
+  lambda_smooth: 5.0
+
+# 融合模块配置
+fusion:
+  d_model: 128
+  n_heads: 4
+  n_reference_states: 4
+  dropout: 0.1
+
+# 门控网络配置
+gating:
+  hidden_dim: 32
+  w_base: [1.0, 0.5, 0.3, 0.5]
+  w_min: 0.05
+  warmup_epochs: 5
+
+# 训练配置
+training:
+  # 阶段一：SPD 预训练
+  spd_pretrain:
+    epochs: 50
+    learning_rate: 1.0e-3
+    weight_decay: 1.0e-5
+    batch_size: 32
+    patience: 10
+    use_stiefel_optimizer: true
+  
+  # 阶段1.5：Ti-MAE 预训练
+  timae_pretrain:
+    epochs: 100
+    learning_rate: 1.0e-4
+    weight_decay: 1.0e-5
+    batch_size: 64
+    patience: 15
+  
+  # 阶段二：联合微调
+  joint:
+    epochs: 100
+    learning_rate: 1.0e-4
+    weight_decay: 1.0e-5
+    batch_size: 32
+    patience: 20
+    freeze_pretrained: false
+    unfreeze_after: 10
+
+# 推理配置
+inference:
+  # 阈值方法
+  threshold_method: 'pot'  # 'pot', 'statistical', 'percentile'
+  # POT 配置
+  pot:
+    q: 0.98
+    level: 0.99
+  # 统计阈值配置
+  statistical:
+    k: 3.0
+  # 分位数阈值
+  percentile: 99.0
+
+# 设备配置
+device: 'cuda'
+
+# 日志配置
+logging:
+  log_dir: './logs'
+  save_frequency: 10
+
+# 检查点配置
+checkpoint:
+  save_dir: './checkpoints'
+

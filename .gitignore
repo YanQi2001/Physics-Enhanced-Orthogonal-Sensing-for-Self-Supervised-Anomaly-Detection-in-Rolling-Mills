@@ -1,0 +1,42 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Environments
+.env
+.venv/
+venv/
+env/
+
+# Data files
+*.csv
+*.tsv
+*.npy
+*.npz
+*.pt
+*.pth
+*.ckpt
+*.pkl
+*.pickle
+
+# Experiment artifacts
+checkpoints/
+logs/
+outputs/
+results/
+abnormal/
+
+# Figures and generated documents
+*.png
+*.jpg
+*.jpeg
+*.pdf
+*.svg
+
+# OS/editor files
+.DS_Store
+.vscode/
+.idea/
